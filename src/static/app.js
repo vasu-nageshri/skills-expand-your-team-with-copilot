@@ -33,10 +33,12 @@ document.addEventListener("DOMContentLoaded", () => {
       document.documentElement.setAttribute("data-theme", "dark");
       darkModeToggle.textContent = "☀️";
       darkModeToggle.title = "Switch to light mode";
+      darkModeToggle.setAttribute("aria-label", "Switch to light mode");
     } else {
       document.documentElement.removeAttribute("data-theme");
       darkModeToggle.textContent = "🌙";
       darkModeToggle.title = "Switch to dark mode";
+      darkModeToggle.setAttribute("aria-label", "Switch to dark mode");
     }
   }
 
