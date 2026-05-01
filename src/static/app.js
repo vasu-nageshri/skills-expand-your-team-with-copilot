@@ -568,6 +568,9 @@ document.addEventListener("DOMContentLoaded", () => {
           </div>
         `
         }
+        <button class="share-button" data-activity="${name}" aria-label="Share this activity" title="Share">
+          📤 Share
+        </button>
       </div>
     `;
 
@@ -586,6 +589,13 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
     }
+
+    // Add click handler for share button
+    const shareButton = activityCard.querySelector(".share-button");
+    shareButton.addEventListener("click", (event) => {
+      event.stopPropagation();
+      openSharePanel(name, details, shareButton);
+    });
 
     activitiesList.appendChild(activityCard);
   }
@@ -797,6 +807,71 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
     );
+  }
+
+  // Close any open share panel
+  function closeAllSharePanels() {
+    document.querySelectorAll(".share-panel").forEach((panel) => panel.remove());
+  }
+
+  // Open share panel for an activity
+  function openSharePanel(name, details, anchorButton) {
+    // Close any already-open share panels
+    closeAllSharePanels();
+
+    const activityUrl =
+      window.location.origin +
+      window.location.pathname +
+      "?activity=" +
+      encodeURIComponent(name);
+
+    const shareText = `Check out "${name}" at Mergington High School! ${details.description} Schedule: ${formatSchedule(details)}`;
+
+    // Use native Web Share API on supported devices (mobile browsers)
+    if (navigator.share) {
+      navigator
+        .share({
+          title: `${name} — Mergington High School`,
+          text: shareText,
+          url: activityUrl,
+        })
+        .catch(() => {
+          // User cancelled or share failed — do nothing
+        });
+      return;
+    }
+
+    // Fallback: show a small dropdown panel
+    const panel = document.createElement("div");
+    panel.className = "share-panel";
+    panel.innerHTML = `
+      <div class="share-panel-title">Share this activity</div>
+      <button class="share-option" id="share-copy">📋 Copy Link</button>
+      <a class="share-option" href="mailto:?subject=${encodeURIComponent(name + " — Mergington High School")}&body=${encodeURIComponent(shareText + "\n\n" + activityUrl)}" target="_blank">✉️ Email</a>
+      <a class="share-option" href="https://wa.me/?text=${encodeURIComponent(shareText + "\n" + activityUrl)}" target="_blank" rel="noopener noreferrer">💬 WhatsApp</a>
+    `;
+
+    // Position the panel near the share button
+    anchorButton.parentElement.style.position = "relative";
+    anchorButton.parentElement.appendChild(panel);
+
+    // Copy link handler
+    panel.querySelector("#share-copy").addEventListener("click", () => {
+      navigator.clipboard
+        .writeText(activityUrl)
+        .then(() => {
+          showMessage("Link copied to clipboard!", "success");
+        })
+        .catch(() => {
+          showMessage("Could not copy link. Please copy manually: " + activityUrl, "info");
+        });
+      closeAllSharePanels();
+    });
+
+    // Close panel when clicking elsewhere
+    setTimeout(() => {
+      document.addEventListener("click", closeAllSharePanels, { once: true });
+    }, 0);
   }
 
   // Show message function
