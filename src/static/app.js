@@ -25,6 +25,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const closeLoginModal = document.querySelector(".close-login-modal");
   const loginMessage = document.getElementById("login-message");
 
+  // School name constant
+  const SCHOOL_NAME = "Mergington High School";
+
   // Activity categories with corresponding colors
   const activityTypes = {
     sports: { label: "Sports", color: "#e8f5e9", textColor: "#2e7d32" },
@@ -825,13 +828,13 @@ document.addEventListener("DOMContentLoaded", () => {
       "?activity=" +
       encodeURIComponent(name);
 
-    const shareText = `Check out "${name}" at Mergington High School! ${details.description} Schedule: ${formatSchedule(details)}`;
+    const shareText = `Check out "${name}" at ${SCHOOL_NAME}! ${details.description} Schedule: ${formatSchedule(details)}`;
 
     // Use native Web Share API on supported devices (mobile browsers)
     if (navigator.share) {
       navigator
         .share({
-          title: `${name} — Mergington High School`,
+          title: `${name} — ${SCHOOL_NAME}`,
           text: shareText,
           url: activityUrl,
         })
@@ -847,7 +850,7 @@ document.addEventListener("DOMContentLoaded", () => {
     panel.innerHTML = `
       <div class="share-panel-title">Share this activity</div>
       <button class="share-option" id="share-copy">📋 Copy Link</button>
-      <a class="share-option" href="mailto:?subject=${encodeURIComponent(name + " — Mergington High School")}&body=${encodeURIComponent(shareText + "\n\n" + activityUrl)}" target="_blank">✉️ Email</a>
+      <a class="share-option" href="mailto:?subject=${encodeURIComponent(name + " — " + SCHOOL_NAME)}&body=${encodeURIComponent(shareText + "\n\n" + activityUrl)}">✉️ Email</a>
       <a class="share-option" href="https://wa.me/?text=${encodeURIComponent(shareText + "\n" + activityUrl)}" target="_blank" rel="noopener noreferrer">💬 WhatsApp</a>
     `;
 

@@ -192,6 +192,7 @@ section h3 {
 }
 
 /* Activity Tag */
+.activity-tag {
   position: absolute;
   top: 8px;
   right: 8px;
